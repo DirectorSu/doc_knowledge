@@ -216,7 +216,10 @@ ConcurrentXXX java.util.concurrent 包下面的容器
   寻址方法:
 
   ```java
-  int i = key.threadLocalHashCode & (len-1);
+          private void set(ThreadLocal<?> key, Object value) {
+              int i = key.threadLocalHashCode & (len-1);
+              //...
+          }
   ```
 
 * Thread#threadLocals
@@ -325,13 +328,36 @@ CPU调度的最小单位
 
 * synchronized
 
-  基于monitor实现
-
   synchronized语句块锁一个对象
 
   synchronized实例方法，锁方法里的this
 
   synchronized静态方法，锁方法对应的Class
+
+  基于monitor实现,无论方法调用还是同步语句块。任何对象都有一个monitor与之关联,monitor有一个计数器
+
+  monitorenter/exit用来实现synchronized语句块
+
+  * monitorenter
+
+    当monitor=0时,可进入monitor;monitor可重入，每次monior+=1
+
+    当monitor>0时,monitorenter被阻塞,直到monitor=0
+
+  * monitorexit
+
+    每次执行,monitor-=1,直到monitor=0,其他线程可以获取monitor
+
+  * 方法调用时,自动进入monitor,返回时自动退出monitor。方法调用/返回指令中隐式处理
+
+  * synchronized语句块与方法在异常发生时处理方法不同
+
+    * 正常完成,通过jvm返回指令退出monitor; 非正常时,通过athrow指令退出monitor
+    * 语句块: jvm异常处理机制保证退出语句块开始时的monitor
+
+* volitale
+
+  通过试工作内存中的变量副本失效
 
 
 
