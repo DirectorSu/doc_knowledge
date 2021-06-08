@@ -1,25 +1,3 @@
-switch: byte short char int enum String
-
-
-
-* final finally finalize
-
-  * final
-
-    修饰类: 不可被继承
-
-    修饰方法: 不可被重写
-
-    修饰变量: 不可改变引用的指向
-
-  * finnaly
-
-    Try-catch-finnaly 一定会被执行
-
-  * finalize
-
-    Object的一个方法,当对象被认定为垃圾时,会调用该方法
-
 # 一 类与对象
 
 ## 1.1 Object
@@ -104,7 +82,7 @@ String str = new String("abc");
 
 元素无序, key允许传null, key=null则hash=0
 
-loadFactor = DEFAULT_LOAD_FACTOR = 0.75f
+loadFactor = DEFAULT_LOAD_FACTOR = 0.75f. 非final变量，可以通过构造方法指定
 
 DEFAULT_INITIAL_CAPACITY = 1 << 4 = 16
 
@@ -221,6 +199,8 @@ ConcurrentXXX java.util.concurrent 包下面的容器
               //...
           }
   ```
+
+  ThreadLocal<>并没有重写hashCode方法，而是通过threadlocalHashCode来做散列值。该值是通过每次自增HASH_INCREASEMENT来确定的
 
 * Thread#threadLocals
 
@@ -357,7 +337,17 @@ CPU调度的最小单位
 
 * volitale
 
-  通过试工作内存中的变量副本失效
+  通过使工作内存中的变量副本失效,保证了可见性
+
+  volitale对象赋值后，对应的汇编代码会多一条lock前缀指令
+
+  lock前缀指令将本本处理器的缓存值写入内存，从而导致其他处理器的缓存值失效，达到可见性的目的
+
+  同时将缓存写入内存，意味着该指令前的其他指令都已经完成，从而导致禁止指令重拍，达到有序性的目的
+
+  但是无法保证原子性
+
+* synchronized不能修饰变量, volitale不能修饰方法
 
 
 
@@ -482,6 +472,36 @@ Retrofit
 java语言规范6.6.1 确定可访问性：如果成员/构造器是private,那么访问是允许的,当且仅当它出现在包围着该成员/构造器生命的顶层类类体内部
 
 通俗的说，对于private修饰的成员/放在，只要在本calss文件中，都是可访问的。无论是内部类访问外部类，还是外部类访问内部类，或者有static修饰
+
+
+
+# 九 关键字
+
+## 9.1 switch
+
+适用以下类型 byte short char int enum String
+
+## 9.2 final finally finalize
+
+* final
+
+  修饰类: 不可被继承
+
+  修饰方法: 不可被重写
+
+  修饰变量: 不可改变引用的指向
+
+* finnaly
+
+  Try-catch-finnaly 一定会被执行
+
+* finalize
+
+  Object的一个方法,当对象被认定为垃圾时,会调用该方法
+
+## 9.3 synchroized  & volitale
+
+见线程相关章节
 
 
 
