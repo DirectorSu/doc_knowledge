@@ -148,6 +148,144 @@ Surfaceflinger/Audio/Choreographer/InputDispatcher...
 
 
 
+# 二 Binder
+
+
+
+
+
+# 三 Apk打包
+
+## 3.1 打包流程
+
+
+
+## 3.2 签名
+
+### 3.2.1 v1签名
+
+### 3.2.2 v2签名
+
+### 3.2.3 v3签名
+
+
+
+# 四 dex文件
+
+## 4.1 dex文件结构
+
+## 4.2 multidex
+
+### 4.2.1 multidex的原因
+
+### 4.2.2 不分dex直接加载会不会有问题
+
+
+
+# 五 View
+
+## 5.1 measure layout & draw
+
+## 5.2 事件分发
+
+## 5.3 requestLayout 
+
+## 5.4 invalidate
+
+
+
+# 六 Context
+
+## 6.1 Context的种类
+
+
+
+# 七 Activity
+
+## 7.1 启动流程
+
+
+
+# 八 Window
+
+
+
+# 九 性能
+
+## 9.1 内存
+
+### 9.1.1 工具 & 原理
+
+### 9.1.2 LeakCanary原理
+
+
+
+# 十 BroadCast
+
+## 10.1 静态 & 动态
+
+## 10.2 粘性 & 非粘性
+
+## 10.3 优先级
+
+
+
+
+
+# 十一 虚拟机
+
+## 11.1 Dalvik
+
+## 11.2 ART
+
+
+
+
+
+## 十二 屏幕适配
+
+
+
+# 十三 gradle
+
+循环依赖会有问题吗，如何解决
+
+
+
+# 十四 Service
+
+## 14.1 生命周期
+
+## 14.2 startService
+
+## 14.3 bindService
+
+
+
+
+
+# 十五 ContentProvider
+
+
+
+# 十六 序列化
+
+## 16.1 Serializable
+
+## 16.2 Parcelable
+
+
+
+# 三方库
+
+## Retrofit
+
+
+
+
+
+
+
 # 性能调优
 
 MemoryLeak原理
