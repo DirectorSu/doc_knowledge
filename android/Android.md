@@ -282,6 +282,92 @@ Surfaceflinger/Audio/Choreographer/InputDispatcher...
 
 
 
+# Android版本更新
+
+## Android 12
+
+### 所有应用
+
+* 优化沉浸模式下手势导航
+
+* 前台服务通知延迟: 延迟10s再展示前台服务通知
+* 限制mac地址访问. target31返回null,其他返回占位符
+
+### target=31
+
+* 后台应用禁止启动前台service
+* 无法在service、广播中startActivity
+* 使用IntentFilter的Activity/Service/BroadcastReceiver必须显示指明export
+
+## Android 11
+
+### target=30
+
+* 强制分区存储
+* 自动重置权限,长时间未使用的应用重置敏感权限
+* 必须在系统设置页面,才能授权后台位置访问权限
+* 软件包可见性。从获取安装列表，改为提供列表向系统查询哪些存在
+
+### 所有应用
+
+* 单次授权。位置/麦克风/摄像头可以临时设置权限
+* 用户拒绝某项权限增加”不在询问“选项
+* 针对5G的模拟器
+
+## Android 10
+
+### target=29
+
+* 分区存储 （非强制）
+
+  * 非强制, 在Manifest中声明```requestLegacyExternalStorage```可规避
+
+  * 内部存储空间
+
+    本应用专属```getFilesDir```
+
+    ```/data/data/package_name/```
+
+    ```/data/user/0/package_name/```
+
+    其他应用无论如何不能访问
+
+  * 外部存储空间
+
+    本应用专属空间 ```getExernalFilesDir```
+
+    其他应用需要权限才能访问
+
+    ```/storage/emulated/0/Android/data/package_name/```
+
+* 后台启动activity限制
+
+* 不能获取序列号 & IMEI
+
+* WLAN/BT扫描需要FINE_LOCATION权限
+
+### 所有应用
+
+* 限制非sdk接口使用 (反射)
+
+  * 黑名单
+
+    禁止访问，访问则抛出异常
+
+  * 灰名单
+
+    暂时还可以用
+
+  * 白名单
+
+    公开api,可正常使用
+
+
+
+# 调试工具
+
+## Android Size Analyzer
+
 
 
 
