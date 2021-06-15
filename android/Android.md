@@ -82,7 +82,7 @@ loop方法死循环，从messagequeue中取消息
 
 有了同步屏障之后，`MessageQueue#next()`只会返回屏障后面的异步消息，而忽略所有同步消息
 
-异步消息同样要遵守时间约定，没到到搭预定时间时，消息队列会阻塞
+异步消息同样要遵守时间约定，没到到达预定时间时，消息队列会阻塞
 
 `MessageQueue#removeSyncBarrier`会移除一条同步屏障,根据token
 
@@ -158,15 +158,95 @@ Surfaceflinger/Audio/Choreographer/InputDispatcher...
 
 ## 3.1 打包流程
 
+* 生成R文件
 
+  输入: 各资源文件
+
+  工具: aapt (Android Asset Packaing Tool)
+
+  输出: R.java, resource.arsc
+
+  资源文件会分配 id，放在resource.arsc文件中。该文件记录了id与对应xml文件的对应关系
+
+* aidl生成.java
+
+  输入: 各aidl文件
+
+  工具: aidl
+
+  中间会生成对应的.stub/.proxy类。如果没有用到aidl，则跳过此步骤
+
+* 生成class文件
+
+  输入: 各java文件，包括前两步生成的java
+
+  工具: javac
+
+  标准的javac编译器动作，生成.class文件,位于工程bin/classes目录
+
+* 生成dex文件
+
+  输入: 各class文件
+
+  工具: dx
+
+  三方lib中的class文件也会在这一步被转换成dex
+
+  dex文件可以压缩常量池，消除冗余信息，减少最终apk大小
+
+* 生成apk文件
+
+  输入: 位图、asset目录、dex文件
+
+  工具: apkbuilder
+
+  此时apk尚未签名
+
+* 签名
+
+  输入: 生肉apk
+
+  工具: jarsigner、apksigner
+
+* 对齐
+
+  输入: 已签名apk
+
+  工具: zipalign
+
+  以4的倍数进行对齐，加快访问速度
 
 ## 3.2 签名
 
 ### 3.2.1 v1签名
 
+支持版本: Android6.0及以前
+
+签名工具: `jarsigner`
+
+签名文件: META-INF目录，三个文件: MANIFEST.MF, CERT.SF, CERT.RSA
+
+MANIFEST.MF： 对所有文件生成摘要(SHA1)
+
+CERT.SF： 对MANIFEST.MF及文件中的内容进行二次摘要(SHA1)
+
+CERT.RSA: 使用私钥对CERT.SF进行签名, 签名+公钥(数字证书)放入CERT.RSA中
+
+验证: 使用公钥对签名进行解密，得到摘要，根据摘要依次比对各文件是否经过修改
+
 ### 3.2.2 v2签名
 
+<img src="sign-v2.png" alt="map" />
+
+支持版本: Android7.0及以上
+
+在apk(zip)文件中新增了`apk签名块`数据区域，用于存放签名信息
+
 ### 3.2.3 v3签名
+
+支持版本: Android9.0及以上
+
+支持apk秘钥轮替。及可以更新签名。但是要使用旧的签名为新签名担保
 
 
 
@@ -307,6 +387,7 @@ Surfaceflinger/Audio/Choreographer/InputDispatcher...
 * 自动重置权限,长时间未使用的应用重置敏感权限
 * 必须在系统设置页面,才能授权后台位置访问权限
 * 软件包可见性。从获取安装列表，改为提供列表向系统查询哪些存在
+* 无法安装仅使用v1签名的应用
 
 ### 所有应用
 
