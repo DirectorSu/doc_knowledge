@@ -268,6 +268,20 @@ CERT.RSA: 使用私钥对CERT.SF进行签名, 签名+公钥(数字证书)放入C
 
 ## 5.2 事件分发
 
+
+
+### View#dispatchTouchEvent
+
+touchLister#onTouch ? 已消费 : onTouchEvent
+
+onTouchEvent ? 已消费 : 未消费
+
+onTouch: 在DOWN中抛一个延迟runable触发LongClickListener。在UP中出发ClickListener(如果没触发LongClick)
+
+
+
+
+
 ## 5.3 requestLayout 
 
 ## 5.4 invalidate
