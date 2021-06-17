@@ -268,19 +268,67 @@ CERT.RSA: 使用私钥对CERT.SF进行签名, 签名+公钥(数字证书)放入C
 
 ## 5.2 事件分发
 
+### MotionEvent
 
+事件类型:
 
-### View#dispatchTouchEvent
+* ACTION_DOWN: 第一根手指按下
+* ACTION_POINTER_DOWN: 多指按下
+* ACTION_MOVE: 滑动
+* ACTION_POINTER_UP: 多指中的一指抬起
+* ACTION_UP: 所有手指抬起
 
-touchLister#onTouch ? 已消费 : onTouchEvent
+getAction()
 
-onTouchEvent ? 已消费 : 未消费
+​	getAction()返回一个int值action,其中低16位表示事件类型,高16位表示事件索引
 
-onTouch: 在DOWN中抛一个延迟runable触发LongClickListener。在UP中出发ClickListener(如果没触发LongClick)
+​	如果有多指按下的情况，需要通过事件索引查询对应的PointerID，表明当前是第几根手指
 
+​	只有DOWN/UP事件带有PointerID, MOVE事件没有PointerID
 
+​	当一个View要消费某个DOWN事件时，该事件PointerID对应的后续MOVE和UP事件也全部交给该View处理
 
+​	当一个View不消费某个DOWN事件时，后续的MOVE/UP事件不会传递给该View
 
+### TouchTarget
+
+​	将一个View及其关心的PointerID绑定在一起，一个View可以对应多个PointerID
+
+​	PointerID存放在一个int数据(pointerIdBits)中，按位存放
+
+### 事件拦截
+
+​	DOWN事件或者已经有TouchTarget,则需要通过onInterceptTouchEvent决定是否需要拦截
+
+​	其他情况则认为一定需要拦截(没有TouchTarget说明所有子view都不关系事件,只能自己消费，也就是拦截)
+
+​	子view可以requestDisallowInterupt要求不拦截事件,常用于解决滑动冲突
+
+### 事件分发
+
+​	依次遍历所有子view，如果事件发生在view的范围内，则认为是潜在消费者
+
+​	如果潜在消费者消费了多指事件第一个DOWN，则默认它也会消费后续的DOWN
+
+​	向潜在消费者分发事件,调用其dispatch方法，返回成功则将其加入TouchTarget链表头
+
+​	如果所有潜在消费者均不感兴趣，最终自己消费
+
+### 事件拆分
+
+​	如果设置了事件拆分，则把事件按pointerID拆分病分发给绑定该ID的view
+
+​	如果view收到的第一个事件是POINTER_DOWN，则将其修改为DOWN	
+
+### 事件消费 (View#dispatchTouchEvent)
+
+​	如果有TouchListener则执行,并以listener返回值作为最终结果
+
+​	没有TouchListener则执行onTouchEvent,以onTouchEvent为最终结果
+
+​	onTouchEvent主要用来触发ClickListener、LongClickListener
+
+​	如果clickable=true，则会触发listener，并最终返回true。否则返回false
 
 ## 5.3 requestLayout 
 
