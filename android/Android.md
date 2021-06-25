@@ -150,6 +150,54 @@ Surfaceflinger/Audio/Choreographer/InputDispatcher...
 
 # 二 Binder
 
+<img src="binder.png" alt="binder" style="zoom:50%;" />
+
+
+
+## 2.1 角色分析
+
+### 2.1.1 IInterface
+
+aidl自动生成的java文件会继承该接口, ```asBinder()```方法用来返回实际干活的binder, 对于stub来说返回自己，对于proxy返回mRemote(即stub)
+
+### 2.1.2 IBinder
+
+用于跨进程通信的接口, ```transact```方法用于执行具体的跨进程通信，由```Binder```类来具体实现
+
+```transact()```方法是同步的,客户端进程调用之后,对应的线程会阻塞. 服务端进程接收之后,会在线程池中选择线程执行
+
+```transact()```方法会在一个线程中执行，支持递归跨进程调用，即A.transact()调用B.transact(), B.transact()又调用A.transact()。分析```transact()```运行的线程时，完全不用考虑跨进程因素，当做本地对象考虑即可
+
+### 2.1.3 Binder
+
+```IBinder```的实现类，实现了```transact()```方法，同时新增了```onTransact()```方法, ```transact()```会将请求全部转调到```onTransact()```中。
+
+### 2.1.4 IWindowManger
+
+根据aidl文件自动生成的接口，继承自```IInterface```, aidl文件中定义的方法会被添加到该接口中。同时该接口包含一个```Stub```抽象内部类作为服务段角色,```Stub```又有一个```Proxy```内部类作为服务代理。
+
+### 2.1.5 Stub
+
+服务端角色，抽象类，其抽象方法也就是aidl中定义的方法。继承```Stub```并实现了抽象方法的类，才是真正的服务端。
+
+```Stub```类有一个静态方法```asInterface(IBinder)```，用于返回一个具体服务端对象。当本进程调用时，返回```Stub```本身，当跨进程调用时,返回一个```Proxy```,参数IBinder是真正的服务端
+
+在```Stub```的```onTransact()```方法中，根据```code```参数，转调Stub中对外提供服务的方法(aidl中的方法)。而code参数，是在使用```IWindowManager```调用时通过方法名转换而来的(见```Proxy```)，从而为客户端的调用和服务端的具体执行建立了联系
+
+### 2.1.6 Proxy
+
+服务端代理,此类存在于客户端进程，客户端调用该类的方法，该类最终调用Stub。Stub类的内部类，非抽象。对aidl中定义的方法做了默认实现，通过方法名找到对应的code，并把参数转化为Parcel,然后调用```mRemote```的```transact()```方法发起跨进程通信。```mRemote```是一个```IBinder```对象，也就是上面```Stub```类的对象,```Stub```类是抽象的，这个```mRemote```的真是身份是```WindowManagerService```
+
+### 2.1.7 WindowManagerService
+
+真正的服务端。在跨进程通信时,该类作为```IBinder``` 对象,经```Proxy```的构造方法，保存在```mRemote```参数中。当```Stub```中的```onTransact()```响应一条跨进程调用时，会根据```code```参数转调对应的抽象方法(```aidl```中的方法),而```WindowManagerService```则继承了```Stub```并实现了抽象方法，因此最终会执行```WindowManagerService```中的方法产生服务
+
+### 2.1.8 Parcel
+
+Android中用于序列化/反序列化的类，常用于```Binder```通信。
+
+
+
 
 
 
@@ -395,6 +443,13 @@ getAction()
 
 
 # 十四 Service
+
+* 前台Service: 绑定一个常驻通知的Service
+* 后台Service: 没有通知
+
+
+
+
 
 ## 14.1 生命周期
 
