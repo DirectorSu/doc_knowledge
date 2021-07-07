@@ -296,6 +296,68 @@ CPU调度的最小单位
 
 ## 5.3 线程池 & 线程池状态转移图
 
+```java
+public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue<Runnable> workQueue,
+                          ThreadFactory threadFactory,
+                          RejectedExecutionHandler handler)
+```
+
+
+
+### 5.3.1 关键参数
+
+* BlockingQueue
+
+  ArrayBlockingQueue: 基于数组,FIFO,有界支持公平锁和非公平锁
+
+  LinkedBlockingQueue: 基于链表, FIFO,有界, 默认MAX_VALUE,注意OOM
+
+  PriorityBlockingQueue: 无界,默认自然序
+
+  DelayQueue: 基于PriorityQueue
+
+  SynchronousQueue: 不存储元素,有界, CachedThreadPool
+
+* ThreadFactory
+
+* RejectedExecutionHandler
+
+  AbortPolicy: 默认策略,处理方式为抛异常
+
+  CallerRunsPolicy: 交给提交任务的线程处理
+
+  DiscardOldestPolicy: 丢弃最老任务
+
+  DiscardPolicy: 丢弃待添加的任务
+
+
+
+## 5.3.2 常用线程池
+
+* Excutors#newCachedThreadPool
+
+  
+
+
+
+* Excutors#newFixedThreadPool
+
+
+
+* Excutors#newScheduledThreadPool
+
+
+
+* Excutors#newSingleThreadExecutor
+
+
+
+* Excutors#newSingleThreadScheduledExecutor
+
 
 
 ## 5.4 线程同步与安全

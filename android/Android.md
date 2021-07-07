@@ -477,7 +477,29 @@ getAction()
 
 ## Retrofit
 
+* 技术基础
 
+  动态代理
+
+* 
+
+
+
+## LeakCanary
+
+* 技术基础
+
+  弱引用 & 引用队列
+
+* 检测对象
+
+  Activity、Fragment、View、ViewModel
+
+* 原理
+
+  在onDestroy后将Activity的弱引用注册到RefrenceQueue,等待5s如果未被添加到引用队列，说明存在泄漏嫌疑
+
+  手动执行GC，如果依旧没添加到引用队列,判定为存在泄漏
 
 # Android版本更新
 
