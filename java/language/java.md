@@ -296,6 +296,10 @@ CPU调度的最小单位
 
 ## 5.3 线程池 & 线程池状态转移图
 
+<img src="ThreadPool.png" alt="ThreadState" style="zoom:30%;" />
+
+
+
 ```java
 public ThreadPoolExecutor(int corePoolSize,
                           int maximumPoolSize,
@@ -336,27 +340,56 @@ public ThreadPoolExecutor(int corePoolSize,
 
 
 
-## 5.3.2 常用线程池
+### 5.3.2 生命周期
+
+<img src="ThreadPoolLifeCycle.png" alt="ThreadState" style="zoom:30%;" />
+
+
+
+
+
+## 5.3.3 常用线程池
 
 * Excutors#newCachedThreadPool
 
-  
-
-
+```java
+public static ExecutorService newCachedThreadPool() {
+    return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                  60L, TimeUnit.SECONDS,
+                                  new SynchronousQueue<Runnable>());
+}
+```
 
 * Excutors#newFixedThreadPool
 
-
+```java
+public static ExecutorService newFixedThreadPool(int nThreads) {
+    return new ThreadPoolExecutor(nThreads, nThreads,
+                                  0L, TimeUnit.MILLISECONDS,
+                                  new LinkedBlockingQueue<Runnable>());
+}
+```
 
 * Excutors#newScheduledThreadPool
 
-
+```java
+public ScheduledThreadPoolExecutor(int corePoolSize) {
+    super(corePoolSize, Integer.MAX_VALUE,
+          DEFAULT_KEEPALIVE_MILLIS, MILLISECONDS,
+          new DelayedWorkQueue());
+}
+```
 
 * Excutors#newSingleThreadExecutor
 
-
-
-* Excutors#newSingleThreadScheduledExecutor
+```java
+public static ExecutorService newSingleThreadExecutor() {
+    return new FinalizableDelegatedExecutorService
+        (new ThreadPoolExecutor(1, 1,
+                                0L, TimeUnit.MILLISECONDS,
+                                new LinkedBlockingQueue<Runnable>()));
+}
+```
 
 
 
