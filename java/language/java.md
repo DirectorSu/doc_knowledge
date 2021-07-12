@@ -294,6 +294,14 @@ CPU调度的最小单位
 
 
 
+### 5.2.4 线程优先级
+
+* MIN_PRIORITY = 1
+* NORM_PRIORITY = 5
+* MAX_PRIORITY = 10
+
+
+
 ## 5.3 线程池 & 线程池状态转移图
 
 <img src="ThreadPool.png" alt="ThreadState" style="zoom:30%;" />

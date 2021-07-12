@@ -388,6 +388,10 @@ getAction()
 
 ## 6.1 Context的种类
 
+<img src="ContextType.png" alt="binder" style="zoom:50%;" />
+
+
+
 
 
 # 七 Activity
