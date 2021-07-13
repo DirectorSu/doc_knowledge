@@ -356,6 +356,8 @@ getAction()
 
 ​	依次遍历所有子view，如果事件发生在view的范围内，则认为是潜在消费者
 
+​	判断事件是否在子View范围内: ```isTransformedTouchPointInView()```
+
 ​	如果潜在消费者消费了多指事件第一个DOWN，则默认它也会消费后续的DOWN
 
 ​	向潜在消费者分发事件,调用其dispatch方法，返回成功则将其加入TouchTarget链表头
