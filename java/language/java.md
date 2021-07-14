@@ -630,6 +630,45 @@ java语言规范6.6.1 确定可访问性：如果成员/构造器是private,那�
 
 
 
+# 十一 注解
+
+Java SE5引入。可以用来做编译检查，自动生成代码或帮助文档
+
+## 11.1 基本概念
+
+* 内置注解
+  * Override
+  * Deprecated
+  * SuppressWarnings
+* 元注解
+  * Target: 注解描述范围,对应ElementType
+  * Retention: 注解级别,对应RetentionPolicy
+  * Documented: 将此注解包含在javadoc中
+  * Inherited: 允许子类继承父类中的注解
+* ElementType
+  * Constructor: 
+  * Field
+  * Local_Variable
+  * Method
+  * Package
+  * Parameter
+  * Type
+* RetentionPolicy
+  * Source: 只存在于源代码,会被编译器丢掉
+  * Class: 注解在class文件中可用,但会被JVM丢掉
+  * Runtime: JVM运行时也保留,可通过反射读取注解信息
+
+## 11.2 注解处理器
+
+* 自定义注解
+* 定义注解处理器
+  * 集成AbstractProcessor,实现process方法在里面处理具体逻辑,如生成新的java文件
+  * init方法会传入一个ProcessingEnv对象,可以拿到一些环境变量
+  * getSupportAnnotationType/SourceVersion用来指定适用范围
+* 注册注解处理器
+  * 可以通过AutoService()注解来实现
+  * 也可以手动写入 javax.annotation.processing.Processor 文件中， res/META-INF目录
+
 
 
 
