@@ -417,6 +417,35 @@ app进程响应transaction的是ClientTransactionHandler，其向H抛出一条�
 依次处理onCreate，onStart，onResume
 在handleResumeActivity中会执行Activity#makeVisible，将DecorView添加至Window
 
+
+
+## 7.2 启动模式
+
+https://developer.android.com/guide/components/activities/tasks-and-back-stack
+
+* standard
+
+  默认值。系统在启动该 Activity 的任务中创建 Activity 的新实例，并将 intent 传送给该实例。
+
+  Activity 可以多次实例化，每个实例可以属于不同的任务，一个任务可以拥有多个实例。
+
+* singleTop
+
+  如果当前任务的顶部已存在 Activity 的实例，则系统会通过调用其 `onNewIntent()`，否则创建新实例。
+  Activity 可以多次实例化，每个实例可以属于不同的任务，一个任务可以拥有多个实例(栈顶除外)。
+
+* singleTask
+
+  系统会创建新任务，并实例化新任务的根 Activity。但是，如果另外的任务中已存在该 Activity 的实例，则系统会通过调用其 onNewIntent() 方法将 intent 转送到该现有实例，而不是创建新实例。Activity 一次只能有一个实例存在
+
+* singleInstance
+
+  与 "singleTask" 相似，唯一不同的是系统不会将任何其他 Activity 启动到包含该实例的任务中。该 Activity 始终是其任务唯一的成员；由该 Activity 启动的任何 Activity 都会在其他的任务中打开。
+
+
+
+
+
 # 八 Window
 
 
@@ -521,6 +550,12 @@ app进程响应transaction的是ClientTransactionHandler，其向H抛出一条�
   在onDestroy后将Activity的弱引用注册到RefrenceQueue,等待5s如果未被添加到引用队列，说明存在泄漏嫌疑
 
   手动执行GC，如果依旧没添加到引用队列,判定为存在泄漏
+
+
+
+## Okhttp
+
+
 
 # Android版本更新
 
@@ -631,3 +666,32 @@ MemoryLeak原理
 
 # Parcelable VS Serialized
 
+
+
+# 热修复
+
+## Tinker
+
+### java文件
+
+* 下载补丁包patch dex
+* patch dex与bug dex合并fix dex
+* 通过反射DexPathList的dexElements数组，将fix dex放在最前
+* 重启后, classloader会重新加载dex, 
+* 在第一个dex中查到到了patch 类，就不会加载bug类了
+
+### 资源文件
+
+* 创建新的AssetManager, 加载补丁资源
+* 从ResourceManager中找出所有Resource
+* 将Resource中的AssetManager替换成新的
+
+
+
+# multidex分包原理
+
+* 生成main dex list
+  * 根据multiDexProguard配置文件,通过proguard生成jar包
+  * 调用MainDexListBuilder将proguard配置中间接引用的类也放入maindexlist
+* 根据main dex list对将class文件分类
+* 使用dex工具分别打出主次dex包
