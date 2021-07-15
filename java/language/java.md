@@ -622,11 +622,62 @@ java语言规范6.6.1 确定可访问性：如果成员/构造器是private,那�
 
 
 
-
-
-
-
 # 十 动态代理
+
+## 原理
+
+只能对interface进行动态代理
+
+需要三个参数，classloader对象，interface.class以及最终处理业务逻辑的invocatoinHandler
+
+根据interface的外观，动态生成一个代理类.当调用interface中方法的时候，代理类将调用转发到invacationHandler，完成最终逻辑处理。
+
+动态生成的类是内存中的一个二进制流，并不是本地的class文件(可以通过参数设置).由指定的classloader来加载，使其接入业务逻辑中。jvm并没有限制class文件的来源
+
+## 关键角色
+
+* Proxy
+
+  实际代理类的基类,有一个newProxyInstance()静态方法用于输出代理对象
+
+  ```java
+  public static Object newProxyInstance(ClassLoader loader,
+                                        Class<?>[] interfaces,
+                                        InvocationHandler h)
+  ```
+
+* ProxyBuilder
+
+  Proxy的内部类,其build方法用于返回代理类的构造方法
+
+  ```java
+  Constructor<?> build()
+  private static Class<?> defineProxyClass(Module m, List<Class<?>> interfaces)
+  ```
+
+* InvocationHandler
+
+  一个接口,有一个invoke方法.所有的代理请求都会被分派到这个方法中.
+
+  通过这个方法来实现实际的业务逻辑
+
+  ```java
+  public Object invoke(Object proxy, Method method, Object[] args)
+      throws Throwable;
+  ```
+
+* ProxyGenerator
+
+  生成最终代理类的class二进制数据流
+
+  ```java
+  static byte[] generateProxyClass(ClassLoader loader,
+                                   final String name,
+                                   List<Class<?>> interfaces,
+                                   int accessFlags) 
+  ```
+
+
 
 
 
