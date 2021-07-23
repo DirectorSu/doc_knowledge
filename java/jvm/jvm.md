@@ -22,9 +22,9 @@
 
 * 局部变量表
 
-  长度在编译器决定,保存在方法的code属性中
+  长度在编译期决定,保存在方法的code属性中
 
-  long/double需要两个槽,其他原始类型占一个槽, 引用&returnAdress占一个槽
+  long/double需要两个槽,其他原始类型占一个槽, 引用&returnAdrress占一个槽
 
   对于实例方法,第0个局部变量是this.其他显示参数顺序向后
 
@@ -120,7 +120,9 @@ class文件中每个类/接口的常量池表
 
 只处理类变量,不处理实例变量
 
-未执行任何字节码指令,包括 <clinit>, 这两个方法在初始化阶段执行
+未执行任何字节码指令,包括 ```<clinit>```和```<init>```, 
+
+```<clinit>```在类初始化阶段执行, ```<init>```在对象初始化阶段执行
 
 
 
@@ -180,15 +182,15 @@ class文件中每个类/接口的常量池表
 
   虚拟机启动通过BootstrapClassloader加载初始类来完成。jvm对初始类进行链接、初始化，并调用main方法
 
-初始化即<clinit>的执行过程。(这里是类的初始化,所以是<clinit>,不是对象的初始化,所以不执行<init>)
+初始化即```<clinit>```的执行过程。(这里是类的初始化,所以是```<clinit>```,不是对象的初始化,所以不执行```<init>```)
 
-<clinit> = 类变量赋值语句 + static{}代码块,按书写顺序 (接口不允许有 static{})
+```<clinit>``` = 类变量赋值语句 + static{}代码块,按书写顺序 (接口不允许有 static{})
 
-jvm保证子类的<clinit>执行之前先执行父类的<clinit>
+jvm保证子类的```<clinit>```执行之前先执行父类的```<clinit>```
 
-接口与超接口的<clinit>执行顺序没有任何关系,应用到那个接口的字段，就执行那个接口的<clinit>
+接口与超接口的```<clinit>```执行顺序没有任何关系,应用到那个接口的字段，就执行那个接口的```<clinit>```
 
-jvm通过`初始化锁LC`保证<clinit>是线程安全的, 每个类/接口的LC是唯一的
+jvm通过`初始化锁LC`保证```<clinit>```是线程安全的, 每个类/接口的LC是唯一的
 
 
 
@@ -214,12 +216,16 @@ jvm通过`初始化锁LC`保证<clinit>是线程安全的, 每个类/接口的LC
 
 * JAVA 常用ClassLoader
 
-| 表头     | 引导类加载器         | 扩展类加载器         | 应用类加载器           |
+|          | 引导类加载器         | 扩展类加载器         | 应用类加载器           |
 | -------- | -------------------- | -------------------- | ---------------------- |
 | 英文名   | BootstrapClassLoader | ExtensionClassLoader | ApplicationClassLoader |
 | 加载范围 | <JAVA_HOME>\lib      | <JAVA_HOME>\lib\ext  | CLASS_PATH             |
 
 AndroidClassLoader
+
+|          | PathClassLoader        | DexClassLoader                | BaseClassLoader |
+| -------- | ---------------------- | ----------------------------- | --------------- |
+| 加载范围 | 加载默认路径apk下的dex | 加载指定路径下jar、apk中的dex |                 |
 
 
 
@@ -276,15 +282,21 @@ AndroidClassLoader
 ## 6.1 方法调用
 
 * `invokestatic`静态方法
-* `invokespecial` <init>,私有方法, 父类方法
+* `invokespecial` ```<init>```,私有方法, 父类方法
 * `invokevirtua1`虚方法(包括final方法)
 * `invokeinterface`接口方法
 * `invokedynamic`
 
-非虚方法: 静态方法、<init>方法、私有方法、父类方法、final方法
+非虚方法: 静态方法、```<init>```方法、私有方法、父类方法、final方法
 
 虚方法: 非虚方法以外的所有
 
 
 
 JIT VS AOT
+
+|          | Interpreter  | JIT                           | AOT                            |
+| -------- | ------------ | ----------------------------- | ------------------------------ |
+| 名称     | 解释器       | 即时编译器Just In Time        | 预编译器Ahead Of Time          |
+| 特点     | 逐条解释执行 | 搜集热点代码,择时编译为机器码 | 安装后,运行前,全部编译为机器码 |
+| 相关技术 |              | 调用计数器 & 回边计数器       |                                |

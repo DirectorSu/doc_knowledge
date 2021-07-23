@@ -256,7 +256,7 @@ CPU调度的最小单位
 
 `wait & notify是Object的方法, 不是Thread的方法`
 
-每个对象都有一个wait集合,存放在wait该对象的所有线程
+每个对象都有一个wait集合(也有人称之为等待池),存放在wait该对象的所有线程
 
 * wait
 
@@ -427,6 +427,8 @@ public static ExecutorService newSingleThreadExecutor() {
 
     当monitor>0时,monitorenter被阻塞,直到monitor=0
 
+    (monitorenter被阻塞的线程,在某些地方也被称为进入了对象的锁池。锁池和上文中提到的等待池,是非正规的说法,官方文档中并无这两个概念.二者的关系可以这么理解,首先二者不是一个东西,其次线程从等待池中出来之后,会进入锁池)
+
   * monitorexit
 
     每次执行,monitor-=1,直到monitor=0,其他线程可以获取monitor
@@ -504,9 +506,13 @@ Retrofit
 
 ## 7.1 exception vs error vs throwable
 
+* Throwable
+
+  Error和Exception的父类
+
 * Error
 
-  严重问题，应用不应该尝试catch.例如内存不足
+  严重问题，由于虚拟机环境或内部原因导致,应用不应该尝试catch.例如内存不足
 
 * Exception
 
@@ -584,7 +590,7 @@ Retrofit
 
 ## 8.3 private的访问
 
-java语言规范6.6.1 确定可访问性：如果成员/构造器是private,那么访问是允许的,当且仅当它出现在包围着该成员/构造器生命的顶层类类体内部
+java语言规范6.6.1 确定可访问性：如果成员/构造器是private,那么访问是允许的,当且仅当它出现在包围着该成员/构造器声明的顶层类类体内部
 
 通俗的说，对于private修饰的成员/放在，只要在本calss文件中，都是可访问的。无论是内部类访问外部类，还是外部类访问内部类，或者有static修饰
 
@@ -713,7 +719,7 @@ Java SE5引入。可以用来做编译检查，自动生成代码或帮助文档
 
 * 自定义注解
 * 定义注解处理器
-  * 集成AbstractProcessor,实现process方法在里面处理具体逻辑,如生成新的java文件
+  * 继承AbstractProcessor,实现process方法在里面处理具体逻辑,如生成新的java文件
   * init方法会传入一个ProcessingEnv对象,可以拿到一些环境变量
   * getSupportAnnotationType/SourceVersion用来指定适用范围
 * 注册注解处理器
