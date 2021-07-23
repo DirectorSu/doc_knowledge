@@ -464,15 +464,11 @@ public static ExecutorService newSingleThreadExecutor() {
 
 ### 5.4.4 独占锁 可重入锁
 
+### 5.4.5 构建死锁
 
+### 5.4.6 线程同步计数器 
 
-## 5.4.5 构建死锁
-
-
-
-## 5.4.6 线程同步计数器 
-
-
+### 5.4.7 锁升级
 
 
 
